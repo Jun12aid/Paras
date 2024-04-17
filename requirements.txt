@@ -1,4 +1,5 @@
-flask
+fastapi
+pydantic
 uvicorn
 pandas
 joblib
