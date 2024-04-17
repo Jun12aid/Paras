@@ -1,11 +1,13 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import pandas as pd
 from joblib import load
 import furl
 
+app = FastAPI()
 
-app = Flask(__name__)
-
+class URL(BaseModel):
+    url: str
 
 def extract_features(url):
     f = furl.furl(url)
@@ -131,111 +133,4 @@ def extract_features(url):
         'qty_and_url': qty_and_url,
         'qty_exclamation_url': qty_exclamation_url,
         'qty_space_url': qty_space_url,
-        'qty_tilde_url': qty_tilde_url,
-        'qty_comma_url': qty_comma_url,
-        'qty_plus_url': qty_plus_url,
-        'qty_asterisk_url': qty_asterisk_url,
-        'qty_hashtag_url': qty_hashtag_url,
-        'qty_dollar_url': qty_dollar_url,
-        'qty_percent_url': qty_percent_url,
-        'qty_tld_url': qty_tld_url,
-        'length_url': length_url,
-        'qty_dot_domain': qty_dot_domain,
-        'qty_hyphen_domain': qty_hyphen_domain,
-        'qty_underline_domain': qty_underline_domain,
-        'qty_slash_domain': qty_slash_domain,
-        'qty_questionmark_domain': qty_questionmark_domain,
-        'qty_equal_domain': qty_equal_domain,
-        'qty_at_domain': qty_at_domain,
-        'qty_and_domain': qty_and_domain,
-        'qty_exclamation_domain': qty_exclamation_domain,
-        'qty_space_domain': qty_space_domain,
-        'qty_tilde_domain': qty_tilde_domain,
-        'qty_comma_domain': qty_comma_domain,
-        'qty_plus_domain': qty_plus_domain,
-        'qty_asterisk_domain': qty_asterisk_domain,
-        'qty_hashtag_domain': qty_hashtag_domain,
-        'qty_dollar_domain': qty_dollar_domain,
-        'qty_percent_domain': qty_percent_domain,
-        'qty_vowels_domain': qty_vowels_domain,
-        'domain_length': domain_length,
-        'server_client_domain': server_client_domain,
-        'qty_dot_directory': qty_dot_directory,
-        'qty_hyphen_directory': qty_hyphen_directory,
-        'qty_underline_directory': qty_underline_directory,
-        'qty_slash_directory': qty_slash_directory,
-        'qty_questionmark_directory': qty_questionmark_directory,
-        'qty_equal_directory': qty_equal_directory,
-        'qty_at_directory': qty_at_directory,
-        'qty_and_directory': qty_and_directory,
-        'qty_exclamation_directory': qty_exclamation_directory,
-        'qty_space_directory': qty_space_directory,
-        'qty_tilde_directory': qty_tilde_directory,
-        'qty_comma_directory': qty_comma_directory,
-        'qty_plus_directory': qty_plus_directory,
-        'qty_asterisk_directory': qty_asterisk_directory,
-        'qty_hashtag_directory': qty_hashtag_directory,
-        'qty_dollar_directory': qty_dollar_directory,
-        'qty_percent_directory': qty_percent_directory,
-        'directory_length': directory_length,
-        'qty_dot_file': qty_dot_file,
-        'qty_hyphen_file': qty_hyphen_file,
-        'qty_underline_file': qty_underline_file,
-        'qty_slash_file': qty_slash_file,
-        'qty_questionmark_file': qty_questionmark_file,
-        'qty_equal_file': qty_equal_file,
-        'qty_at_file': qty_at_file,
-        'qty_and_file': qty_and_file,
-        'qty_exclamation_file': qty_exclamation_file,
-        'qty_space_file': qty_space_file,
-        'qty_tilde_file': qty_tilde_file,
-        'qty_comma_file': qty_comma_file,
-        'qty_plus_file': qty_plus_file,
-        'qty_asterisk_file': qty_asterisk_file,
-        'qty_hashtag_file': qty_hashtag_file,
-        'qty_dollar_file': qty_dollar_file,
-        'qty_percent_file': qty_percent_file,
-        'file_length': file_length,
-        'qty_dot_params': qty_dot_params,
-        'qty_hyphen_params': qty_hyphen_params,
-        'qty_underline_params': qty_underline_params,
-        'qty_slash_params': qty_slash_params,
-        'qty_questionmark_params': qty_questionmark_params,
-        'qty_equal_params': qty_equal_params,
-        'qty_at_params': qty_at_params,
-        'qty_and_params': qty_and_params,
-        'qty_exclamation_params': qty_exclamation_params,
-        'qty_space_params': qty_space_params,
-        'qty_tilde_params': qty_tilde_params,
-        'qty_comma_params': qty_comma_params,
-        'qty_plus_params': qty_plus_params,
-        'qty_asterisk_params': qty_asterisk_params,
-        'qty_hashtag_params': qty_hashtag_params,
-        'qty_dollar_params': qty_dollar_params,
-        'qty_percent_params': qty_percent_params
-    }
-
-    return features
-
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = request.json
-    url = data['url']
-    features = extract_features(url)
-    df = pd.DataFrame([features])
-
-    try:
-        # Use joblib to load your model
-        model = load('hybrid_model.pkl')
-        prediction = model.predict(df)
-        if prediction == [0]:
-            res = 'Not a Phishing Domain'
-        else:
-            res = 'It is a Phishing Domain'
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-    return jsonify({"prediction": res})
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        'qty_tilde_url': qty
