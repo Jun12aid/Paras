@@ -1,6 +1,5 @@
-fastapi
+flask
 uvicorn
-pydantic
 pandas
 joblib
 furl
