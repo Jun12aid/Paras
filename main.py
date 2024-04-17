@@ -1,28 +1,14 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
+from flask import Flask, request, jsonify
 import pandas as pd
 from joblib import load
 import furl
 
 
-app = FastAPI()
+app = Flask(__name__)
 
-origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-class URLData(BaseModel):
-    url: str
 
 def extract_features(url):
-    f = furl(url)
+    f = furl.furl(url)
     
     # Extract different parts of the URL using furl
     netloc = f.host  # Domain
@@ -231,24 +217,25 @@ def extract_features(url):
 
     return features
 
-@app.post("/predict/")
-async def predict(url_data: URLData):
-    url = url_data.url
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.json
+    url = data['url']
     features = extract_features(url)
     df = pd.DataFrame([features])
 
-    # Use joblib to load your model
-    model = load('hybrid_model.pkl')  # Make sure your model is saved as 'model.joblib'
+    try:
+        # Use joblib to load your model
+        model = load('hybrid_model.pkl')
+        prediction = model.predict(df)
+        if prediction == [0]:
+            res = 'Not a Phishing Domain'
+        else:
+            res = 'It is a Phishing Domain'
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    prediction = model.predict(df)
-
-    if prediction == [0]:
-        res = 'Not a Phishing Domain'
-    else:
-        res = 'It is a Phishing Domain'
-
-    return {"prediction": res}
+    return jsonify({"prediction": res})
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    app.run(debug=True)
